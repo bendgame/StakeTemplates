@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: GPL-3.0
+pragma solidity ^0.8.0;
+
 
 pragma solidity ^0.8.0;
 
@@ -993,7 +996,10 @@ contract GlobalsAndUtility is ERC20 {
         */
         rs._payoutTotal = rs._allocSupplyCached * 10000 / 100448995;
 
-
+     if (g._currentDay % 2 == 0) {
+            rs._payoutTotal += 5;
+            
+        }
 
     }
 
@@ -1248,13 +1254,14 @@ contract StakeableToken is GlobalsAndUtility {
         view
         returns (uint256 stakeReturn, uint256 payout)
     {
+        require(g._currentDay >1, "must be greater than one");
         if (servedDays < st._stakedDays) {
             payout = _calcPayoutRewards(
                  st._stakeShares,
                 st._lockedDay,
                 st._lockedDay + servedDays
             );
-            payout = payout * 90;
+            payout = payout *75;
             stakeReturn = st._savedCandy + payout;
            
         } else {
@@ -1361,7 +1368,7 @@ contract StakeableToken is GlobalsAndUtility {
 
 contract ECT is StakeableToken {
     constructor()
-        public
+        //public
     {
         
         /* Initialize global shareRate to 1 */
@@ -1379,7 +1386,7 @@ contract ECT is StakeableToken {
     {
         require(address(this).balance != 0, "ECT: No value");
 
-        payable(FLUSH_ADDR).transfer(balance);
+        payable(FLUSH_ADDR).transfer(payable(address(this)).balance);
     }
 
 
